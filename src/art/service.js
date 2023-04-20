@@ -11,7 +11,7 @@ export const fullTextSearch = async (query) => {
 export const getArt = async (objectId) => {
   try {
     const response = await axios.get(`${API_URL}/objects/${objectId}`);
-    console.log(response.data.title);
+    // console.log(response.data.title);
     return response;
   } catch (error) {
     console.log(`Error on ${objectId}`);

@@ -1,7 +1,7 @@
 import {createAsyncThunk}
   from "@reduxjs/toolkit"
 import * as service
-  from "./artworks-service"
+  from "./artworker-service"
 
 export const findArtworksThunk = createAsyncThunk(
   'artworks/findArtworks', async () =>

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createArtworkThunk,
-  findAllArtworksThunk,
+  findArtworksThunk,
   deleteArtworkThunk,
   updateArtworkThunk,
 } from "../services/artworker-thunks";
@@ -28,15 +28,15 @@ const artworksSlice = createSlice({
     [deleteArtworkThunk.fulfilled]: (state, action) => {
       state.artworks = state.artworks.filter((artwork) => artwork._id !== action.payload);
     },
-    [findAllArtworksThunk.pending]: (state, action) => {
+    [findArtworksThunk.pending]: (state, action) => {
       state.loading = true;
       state.artworks = [];
     },
-    [findAllArtworksThunk.fulfilled]: (state, action) => {
+    [findArtworksThunk.fulfilled]: (state, action) => {
       state.loading = false;
       state.artworks = action.payload;
     },
-    [findAllArtworksThunk.rejected]: (state, action) => {
+    [findArtworksThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     },

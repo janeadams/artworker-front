@@ -14,6 +14,8 @@ import {
   findFollowsByFollowedId,
 } from "../services/follows-service";
 import { Link } from "react-router-dom";
+import { getArtworks } from "../art/service";
+import ArtCard from "../components/art-card";
 
 function ProfileScreen() {
   const { userId } = useParams();
@@ -34,7 +36,10 @@ function ProfileScreen() {
   };
   const fetchLikes = async () => {
     const likes = await findLikesByUserId(profile._id);
-    setLikes(likes);
+    const populatedLikes = await Promise.all(
+      getArtworks(likes).map(async (art) =>(ArtCard(art)))
+    );
+    setLikes(populatedLikes);
   };
   const fetchProfile = async () => {
     if (userId) {
@@ -46,9 +51,7 @@ function ProfileScreen() {
     setProfile(response.payload);
   };
   const loadScreen = async () => {
-    // if (!profile) {
     await fetchProfile();
-    // }
     await fetchLikes();
     await fetchFollowing();
     await fetchFollowers();

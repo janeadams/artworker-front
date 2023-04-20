@@ -1,4 +1,3 @@
-import DestructorScreen from "./screens/destructor-screen";
 import { BrowserRouter } from "react-router-dom";
 import { Route, Routes } from "react-router";
 import NavBar from "./components/nav-bar";
@@ -22,7 +21,7 @@ function App() {
             <NavBar />
             <Routes>
               <Route
-                path="/art/artwork/:id"
+                path="/artworks/:id"
                 element={<ArtDetailsScreen />}
               />
               <Route path="/art/search" element={<ArtSearchScreen />} />
@@ -37,7 +36,6 @@ function App() {
               <Route path="/login" element={<LoginScreen />} />
               <Route path="/register" element={<RegisterScreen />} />
               <Route path="/" element={<Home />} />
-              <Route path="/destructors" element={<DestructorScreen />} />
             </Routes>
           </BrowserRouter>
         </div>

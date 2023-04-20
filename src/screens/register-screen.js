@@ -7,11 +7,12 @@ function RegisterScreen() {
   const { currentUser } = useSelector((state) => state.users);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState(""); // new state for the selected role
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const register = () => {
     try {
-      dispatch(registerThunk({ username, password }));
+      dispatch(registerThunk({ username, password, role })); // pass role to registerThunk
       navigate("/profile");
     } catch (err) {
       console.log(err);
@@ -52,6 +53,20 @@ function RegisterScreen() {
             setPassword(e.target.value);
           }}
         />
+      </div>
+      <div className="form-group"> {/* add new form group for role dropdown */}
+        <label>Role</label>
+        <select 
+          className="form-control"
+          value={role} // set selected value to role state
+          onChange={(e) => {
+            setRole(e.target.value); // update role state when user selects a role
+          }}
+        >
+          <option value="">Select role</option>
+          <option value="CURATOR">Curator</option>
+          <option value="ARTIST">Artist</option>
+        </select>
       </div>
       <button onClick={register} className="btn btn-primary">
         Register
