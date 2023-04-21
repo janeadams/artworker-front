@@ -41,9 +41,7 @@ function ArtSearchScreen() {
 
       <h2>Art</h2>
       <div className="container">
-        {artworks.map((art) => (
-          <ArtCard art={art} />
-        ))}
+      {artworks && artworks.map((art) => (ArtCard(art)))}
       </div>
     </div>
   );

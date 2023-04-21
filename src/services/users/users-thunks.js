@@ -6,24 +6,18 @@ export const findAllUsersThunk = createAsyncThunk("users/findAll", async () => {
   return users;
 });
 
-export const findUserByIdThunk = createAsyncThunk(
-  "users/findById",
-  async (id) => {
+export const findUserByIdThunk = createAsyncThunk("users/findById", async (id) => {
     const response = await userService.findUserById(id);
     return response.data;
   }
 );
 
-export const createUserThunk = createAsyncThunk(
-  "users/create",
-  async (user) => {
+export const createUserThunk = createAsyncThunk("users/create", async (user) => {
     const response = await userService.createUser(user);
     return response.data;
   }
 );
-export const updateUserThunk = createAsyncThunk(
-  "users/update",
-  async (user) => {
+export const updateUserThunk = createAsyncThunk("users/update", async (user) => {
     await userService.updateUser(user);
     return user;
   }
@@ -43,9 +37,7 @@ export const logoutThunk = createAsyncThunk("users/logout", async () => {
   await userService.logout();
 });
 
-export const registerThunk = createAsyncThunk(
-  "users/register",
-  async (user) => {
+export const registerThunk = createAsyncThunk("users/register", async (user) => {
     const response = await userService.register(user);
     return response.data;
   }
