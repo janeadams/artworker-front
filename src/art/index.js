@@ -5,13 +5,13 @@ import ArtCard from "../components/art-card";
 
 function ArtScreen() {
   const [results, setResults] = useState({});
-  const [artworks, setArtworks] = useState(null); // set to null instead of []
+  const [artworks, setArtworks] = useState([]); // set to null instead of []
 
   const randomArt = async () => {
     const response = await randomArtSearch();
     setResults(response);
     console.log(response);
-    const artData = await getArtworks(response.objectIDs.slice(0, 10));
+    const artData = await getArtworks(response.objectIDs.slice(0, 11));
     console.log(artData);
     setArtworks(artData);
     return response;
@@ -26,7 +26,7 @@ function ArtScreen() {
       <h1>Art</h1>
       <Link to="/art/search">Search</Link>
       <div className='container'>
-          {artworks && artworks.map((art) => (ArtCard(art)))}
+          {artworks.map((art) => (ArtCard(art)))}
       </div>
     </div>
   );

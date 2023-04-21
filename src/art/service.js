@@ -13,7 +13,7 @@ export const fullTextSearch = async (query) => {
 
 export const randomArtSearch = async () => {
   const response = await axios.get(
-    `${API_URL}/search?q=art&isOnView=true&hasImages=true`
+    `${API_URL}/search?q=landscape&isOnView=true&hasImages=true`
   );
   return response.data;
 };

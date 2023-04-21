@@ -14,7 +14,7 @@ function ArtSearchScreen() {
     const response = await fullTextSearch(search);
     setResults(response);
     navigate(`/art/search/${search}`);
-    const artData = await getArtworks(response.objectIDs.slice(0, 10));
+    const artData = await getArtworks(response.objectIDs.slice(0, 31));
     console.log(artData);
     setArtworks(artData);
     return response;
@@ -41,7 +41,7 @@ function ArtSearchScreen() {
 
       <h2>Art</h2>
       <div className="container">
-      {artworks && artworks.map((art) => (ArtCard(art)))}
+      {artworks.map((art) => (ArtCard(art)))}
       </div>
     </div>
   );

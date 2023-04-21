@@ -18,9 +18,9 @@ function ArtDetailsScreen() {
       const response = await userLikesArt(currentUser._id, id);
       console.log(response);
       if (response.status === 200) {
-        alert("Like added!");
+        console.log("Like added!");
       } else {
-        alert("Like not added. Response: " + response);
+        console.log(response);
       }
     } else {
       console.log("Likes is not an array");
