@@ -8,6 +8,7 @@ function ArtDetailsScreen() {
   const { currentUser } = useSelector((state) => state.users);
   const { id } = useParams();
   const [art, setArt] = useState({});
+  const [liked, setLiked] = useState(false); // <-- Add state to track if art is liked
   const fetchArt = async () => {
     const response = await getArt(id);
     setArt(response.data);
@@ -16,13 +17,23 @@ function ArtDetailsScreen() {
     if (Array.isArray(currentUser.likes)) {
       const response = await userLikesArt(currentUser._id, id);
       console.log(response);
+      if (response.status === 200) {
+        alert("Like added!");
+      } else {
+        alert("Like not added. Response: " + response);
+      }
     } else {
       console.log("Likes is not an array");
     }
+    setLiked(true); // <-- Update liked state to true
   };
   useEffect(() => {
     fetchArt();
-  }, []);
+    // Check if the art is already liked by the user
+    if (currentUser && Array.isArray(currentUser.likes)) {
+      setLiked(currentUser.likes.includes(id));
+    }
+  }, [currentUser, id]);
   return (
     <div>
       <h2>{currentUser && currentUser.username}</h2>
@@ -32,10 +43,12 @@ function ArtDetailsScreen() {
       <p>{art.medium}. {art.dimensions}. {art.creditLine}</p>
       {currentUser && (
         <>
-          <button onClick={likeArt} className="btn btn-success">
-            Like
+          <button onClick={likeArt} className={`btn ${liked ? "btn-secondary" : "btn-success"}`}>
+            {liked ? "Liked" : "Like"}
           </button>
-          <button className="btn btn-danger">Unlike</button>
+          <button className={`btn ${liked ? "btn-danger" : "btn-secondary"}`}>
+            {liked ? "Dislike" : "Unlike"}
+          </button>
         </>
       )}
     </div>

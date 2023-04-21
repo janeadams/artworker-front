@@ -36,9 +36,7 @@ function ProfileScreen() {
   };
   const fetchLikes = async () => {
     const likes = await findLikesByUserId(profile._id);
-    const populatedLikes = await Promise.all(
-      getArtworks(likes).map(async (art) =>(ArtCard(art)))
-    );
+    const populatedLikes = await getArtworks(likes);
     setLikes(populatedLikes);
   };
   const fetchProfile = async () => {
@@ -135,6 +133,13 @@ function ProfileScreen() {
         </div>
       )}
 
+    <div>
+        <h2>Likes</h2>
+        <div className="container">
+        {likes && likes.map((art) => (ArtCard(art)))}
+        </div>
+      </div>
+
       {follows && (
         <div>
           <h2>Followers</h2>
@@ -184,18 +189,6 @@ function ProfileScreen() {
       >
         Logout
       </button>
-      <div>
-        <h2>Likes</h2>
-        <ul className="list-group">
-          {likes.map((like) => (
-            <li className="list-group-item">
-              <Link to={`/art/${like.objectId}`}>
-                <h3>{like.title}</h3>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }

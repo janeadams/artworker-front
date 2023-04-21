@@ -1,3 +1,5 @@
+// The fullTextSearch and randomArtSearch functions make requests to the MET Museum API and return the results. The getArt function makes a request to the MET Museum API for a specific artwork based on its object ID, and if the API returns an error, it falls back to retrieving the artwork from the local database. Finally, the getArtworks function takes an array of object IDs and uses getArt to retrieve information about each artwork, filtering out null values.
+
 import axios from "axios";
 import { findArtworkById } from '../services/artworker-service';
 const API_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
