@@ -37,6 +37,26 @@
   }
 }
 
+html, body, h1, h2, h3, h4, h5, p, div {
+  color: #333;
+}
+
+h1, h2 {
+  padding-top: 20px;
+}
+
+.container-fluid {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.container-narrow {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+
 .artwork {
   object-fit: cover;
   min-width: 200px;

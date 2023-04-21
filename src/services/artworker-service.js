@@ -1,5 +1,5 @@
 import axios from 'axios';
-const ARTWORK_API = 'localhost:3000/api/artworks';
+const ARTWORK_API = 'http://localhost:4000/api/artworks';
 
 export const createArtwork = async (artwork) => {
     const response = await axios.post(ARTWORK_API, artwork)

@@ -18,14 +18,33 @@ import { getArtworks } from "../art/service";
 import ArtCard from "../components/art-card";
 
 function ProfileScreen() {
-  const { userId } = useParams();
   const { currentUser } = useSelector((state) => state.users);
-  const [profile, setProfile] = useState(currentUser);
+  const { userId } = useParams( );
+  const [profile, setProfile] = useState({});
   const [likes, setLikes] = useState([]);
   const [following, setFollowing] = useState([]);
   const [follows, setFollows] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  const fetchProfile = async () => {
+    if (userId) {
+      const user = await findUserById(userId);
+      setProfile(user);
+      setIsOwnProfile(currentUser?._id === user?._id);
+    } else {
+      if (!currentUser) {
+        navigate("/login");
+        return;
+      }
+      else {
+        setProfile(currentUser);
+        setIsOwnProfile(true);
+      }
+    }
+  };  
+
   const fetchFollowing = async () => {
     const following = await findFollowsByFollowerId(profile._id);
     setFollowing(following);
@@ -35,105 +54,67 @@ function ProfileScreen() {
     setFollows(follows);
   };
   const fetchLikes = async () => {
+    console.log(`fetching likes for ${profile._id}`)
     const likes = await findLikesByUserId(profile._id);
     const populatedLikes = await getArtworks(likes);
+    console.log(populatedLikes)
     setLikes(populatedLikes);
   };
-  const fetchProfile = async () => {
-    if (userId) {
-      const user = await findUserById(userId);
-      setProfile(user);
-      return;
+  
+  useEffect(() => {
+    fetchProfile();
+  }, [userId, currentUser]);
+
+  useEffect(() => {
+    console.log(profile);
+    if (profile._id) {
+      fetchLikes();
+      fetchFollowing();
+      fetchFollowers();
     }
-    const response = await dispatch(profileThunk());
-    setProfile(response.payload);
-  };
-  const loadScreen = async () => {
-    await fetchProfile();
-    await fetchLikes();
-    await fetchFollowing();
-    await fetchFollowers();
-  };
+  }, [profile]);
+
   const followUser = async () => {
-    await userFollowsUser(currentUser._id, profile._id);
+    if (currentUser && !isOwnProfile) {
+      await userFollowsUser(currentUser._id, profile._id);
+    }
   };
   const updateProfile = async () => {
     await dispatch(updateUserThunk(profile));
   };
 
   useEffect(() => {
-    loadScreen();
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
   }, [userId]);
+
   return (
-    <div>
-      <h1>
-        <button onClick={followUser} className="btn btn-primary float-end">
-          Follow
-        </button>
-        Profile {typeof userId !== undefined ? "me" : userId}
-      </h1>
+    <div className='container-narrow'>
 
-      {profile && (
-        <div>
-          <h2>Profile</h2>
+      <div>
+        {currentUser && (
           <div>
-            <label>Username</label>
-            <input
-              type="text"
-              readOnly={true}
-              className="form-control"
-              value={profile.username}
-              onChange={(e) => {
-                setProfile({ ...profile, username: e.target.value });
-              }}
-            />
+            <h2>
+              Welcome {currentUser.username}!
+            </h2>
           </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              readOnly={typeof userId !== undefined}
-              className="form-control"
-              value={profile.password}
-              onChange={(e) => {
-                setProfile({ ...profile, password: e.target.value });
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>First Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value={profile.firstName}
-              onChange={(e) => {
-                setProfile({ ...profile, firstName: e.target.value });
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>Last Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value={profile.lastName}
-              onChange={(e) => {
-                setProfile({ ...profile, lastName: e.target.value });
-              }}
-            />
-          </div>
-          <button onClick={updateProfile} className="btn btn-success">
-            Update
-          </button>
+        )}
+      </div>
 
-          <div>
-            <h3>{profile.username}</h3>
-            <h3>{profile._id}</h3>
-          </div>
-        </div>
+      {profile._id && (
+        <h1>
+          {!isOwnProfile && (
+            <button onClick={followUser} className="btn btn-primary float-end">
+              Follow
+            </button>
+          )}
+          Profile {profile.username}
+        </h1>
       )}
 
-    <div>
+      <div>
         <h2>Likes</h2>
         <div className="container">
         {likes && likes.map((art) => (ArtCard(art)))}
@@ -144,13 +125,13 @@ function ProfileScreen() {
         <div>
           <h2>Followers</h2>
           <ul className="list-group">
-            {follows.map((follow) => (
-              <li className="list-group-item">
-                <Link to={`/profile/${follow.follower._id}`}>
-                  <h3>{follow.follower.username}</h3>
-                  <h3>{follow.follower._id}</h3>
-                </Link>
-              </li>
+          {follows.map((follow) => (
+                <li key={follow.follower._id} className="list-group-item">
+                    <Link to={`/profile/${follow.follower._id}`}>
+                        <h3>{follow.follower.username}</h3>
+                        <h3>{follow.follower._id}</h3>
+                    </Link>
+                </li>
             ))}
           </ul>
         </div>
@@ -161,7 +142,7 @@ function ProfileScreen() {
           <h2>Following</h2>
           <ul className="list-group">
             {following.map((follow) => (
-              <li className="list-group-item">
+              <li key={follow.follower._id} className="list-group-item">
                 <Link to={`/profile/${follow.followed._id}`}>
                   <h3>{follow.followed.username}</h3>
                   <h3>{follow.followed._id}</h3>
@@ -171,15 +152,19 @@ function ProfileScreen() {
           </ul>
         </div>
       )}
-      <div>
-        {currentUser && (
-          <div>
-            <h2>
-              Welcome {currentUser.username} {currentUser._id}
-            </h2>
-          </div>
-        )}
-      </div>
+
+  {isOwnProfile && (
+    <>
+      <button
+        className="btn btn-primary"
+        onClick={() => {
+          dispatch(logoutThunk());
+          navigate("/admin");
+        }}
+      >
+        Edit Profile
+      </button>
+
       <button
         className="btn btn-danger"
         onClick={() => {
@@ -189,8 +174,9 @@ function ProfileScreen() {
       >
         Logout
       </button>
-    </div>
-  );
-}
+    </>
+  )}
+  </div>
+)}
 
 export default ProfileScreen;

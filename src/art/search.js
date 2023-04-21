@@ -6,7 +6,7 @@ import ArtCard from "../components/art-card";
 function ArtSearchScreen() {
   const { searchTerm } = useParams();
   const navigate = useNavigate();
-  const [search, setSearch] = useState(searchTerm);
+  const [search, setSearch] = useState("");
   const [results, setResults] = useState({});
   const [artworks, setArtworks] = useState([]);
 
@@ -15,20 +15,23 @@ function ArtSearchScreen() {
     setResults(response);
     navigate(`/art/search/${search}`);
     const artData = await getArtworks(response.objectIDs.slice(0, 31));
+    console.log('searchArt')
     console.log(artData);
     setArtworks(artData);
     return response;
   };
 
   useEffect(() => {
-    if (searchTerm) {
+    if (searchTerm !== undefined) {
+      setSearch(searchTerm);
       searchArt();
     }
   }, [searchTerm]);
 
   return (
     <div>
-      <h1>Art Search</h1>
+      <h1>Search</h1>
+      <p>Suggestions: "sunflowers", "pop art", "landscape", "sculpture"</p>
       <button onClick={searchArt} className="float-end btn btn-primary">
         Search
       </button>
@@ -39,9 +42,9 @@ function ArtSearchScreen() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <h2>Art</h2>
+      <h2>Results</h2>
       <div className="container">
-      {artworks.map((art) => (ArtCard(art)))}
+        {artworks.map((art) => (ArtCard(art)))}
       </div>
     </div>
   );

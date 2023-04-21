@@ -3,107 +3,58 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { createArtworkThunk } from "../services/artworker-thunks";
 
-function CreateScreen() {
-  const { currentUser } = useSelector((state) => state.users);
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [creditLine, setCreditLine] = useState("");
-  const [dimensions, setDimensions] = useState("");
-  const [medium, setMedium] = useState("");
-  const [image, setImage] = useState("");
+const CreateScreen = () => {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const create = () => {
-    try {
-      dispatch(createArtworkThunk({ title, artist, creditLine, dimensions, medium, image }));
-      navigate("/profile");
-    } catch (err) {
-      console.log(err);
-    }
+
+  const [formState, setFormState] = useState({
+    title: "",
+    artistDisplayName: "",
+    medium: "",
+    primaryImage: "",
+    primaryImageSmall: "",
+  });
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    dispatch(createArtworkThunk(formState));
+    navigate("/");
   };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState({ ...formState, [name]: value });
+  };
+
   return (
     <div>
       <h1>Create Artwork</h1>
-      <div className="form-group">
-        <label>Title</label>
-        <input
-          type="text"
-          className="form-control"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-        />
-      </div>
-      <div className="form-group">
-        <label>Artist</label>
-        <input
-          type="text"
-          className="form-control"
-          value={artist}
-          onChange={(e) => {
-            setArtist(e.target.value);
-          }}
-        />
-      </div>
-        <div className="form-group">
-        <label>Credit Line</label>
-        <input
-            type="text"
-            className="form-control"
-            value={creditLine}
-            onChange={(e) => {
-                setCreditLine(e.target.value);
-            }}
-        />
-        </div>
-        <div className="form-group">
-        <label>Dimensions</label>
-        <input
-            type="text"
-            className="form-control"
-            value={dimensions}
-            onChange={(e) => {
-                setDimensions(e.target.value);
-            }}
-        />
-        </div>
-        <div className="form-group">
-        <label>Medium</label>
-        <input
-            type="text"
-            className="form-control"
-            value={medium}
-            onChange={(e) => {
-                setMedium(e.target.value);
-            }}
-        />
-        </div>
-        <div className="form-group">
-        <label>Image URL</label>
-        <input
-            type="text"
-            className="form-control"
-            value={image}
-            onChange={(e) => {
-                setImage(e.target.value);
-            }}
-        />
-        </div>
-      
-      <button onClick={create} className="btn btn-primary">
-        Submit
-      </button>
-      <div>
-        {currentUser && (
-          <div>
-            <h2>{currentUser.username}</h2>
-            <h2>{currentUser.password}</h2>
-          </div>
-        )}
-      </div>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Title:
+          <input type="text" name="title" value={formState.title} onChange={handleChange} />
+        </label>
+        <label>
+          Artist Display Name:
+          <input type="text" name="artistDisplayName" value={formState.artistDisplayName} onChange={handleChange} />
+        </label>
+        <label>
+          Medium:
+          <input type="text" name="medium" value={formState.medium} onChange={handleChange} />
+        </label>
+        <label>
+          Primary Image:
+          <input type="text" name="primaryImage" value={formState.primaryImage} onChange={handleChange} />
+        </label>
+        <label>
+          Primary Image Small:
+          <input type="text" name="primaryImageSmall" value={formState.primaryImageSmall} onChange={handleChange} />
+        </label>
+        <button type="submit">Create Artwork</button>
+      </form>
     </div>
   );
-}
+};
 
 export default CreateScreen;

@@ -2,35 +2,53 @@
 
 import axios from "axios";
 import { findArtworkById } from '../services/artworker-service';
-const API_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
+const MET_API = "https://collectionapi.metmuseum.org/public/collection/v1";
+const ARTWORK_API = 'http://localhost:4000/api/artworks';
 
 export const fullTextSearch = async (query) => {
-  const response = await axios.get(
-    `${API_URL}/search?q=${query}&hasImages=true`
-  );
+  const query_url = `${MET_API}/search?q=${query}`
+  console.log('Random art search..')
+  console.log(query_url)
+  const response = await axios.get(query_url);
   return response.data;
 };
 
 export const randomArtSearch = async () => {
-  const response = await axios.get(
-    `${API_URL}/search?q=landscape&isOnView=true&hasImages=true`
-  );
+  const query_url = `${MET_API}/search?q=landscape`
+  console.log('Random art search..')
+  console.log(query_url)
+  const response = await axios.get(query_url);
   return response.data;
 };
 
 export const getArt = async (objectId) => {
+  // console.log("getArtwork: " + objectId)
   try {
-    const response = await axios.get(`${API_URL}/objects/${objectId}`);
-    // console.log(response.data.title);
-    return response;
+    // console.log('Getting data from MET API...')
+    const get_url = `${MET_API}/objects/${objectId}`
+    // console.log(get_url)
+    const response = await axios.get(get_url);
+    // console.log(`Success! ${response.data.title} by ${response.data.artistDisplayName}`);
+    try {
+      // console.log(`Trying to post artwork ${objectId} to local database`)
+      const post_url = `${ARTWORK_API}`
+      // console.log(post_url)
+      // Post the artwork data to the database using the API endpoint
+      await axios.post(post_url, response.data);
+      // console.log(`Successfully posted ${objectId} to local database`)
+      return response;
+    } catch (error) {
+      console.log(`Error posting ${objectId} to local database: ${error}`);
+      console.log()
+    }
   } catch (error) {
-    console.log(`Error on ${objectId}. Checking local database...`);
+    console.log(`Error finding ${objectId} in the MET database. Checking local database...`);
     try {
       const response = await findArtworkById(objectId);
       return response;
     }
     catch (error) {
-      console.log(`Error on ${objectId}`);
+      console.log(`Error finding ${objectId} in either database: ${error}`);
     }
     return error;
   }

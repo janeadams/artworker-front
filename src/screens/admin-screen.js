@@ -1,35 +1,116 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-// The useSelector hook is used to select the currentUser and users state from the Redux store. The useEffect hook is used to dispatch the findAllUsersThunk action when the component mounts. The users.map method is used to loop through the users and display them in a list.
-
-import { useNavigate } from "react-router";
-import { findAllUsersThunk } from "../services/users/users-thunks";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  profileThunk,
+  logoutThunk,
+  updateUserThunk,
+} from "../services/users/users-thunks";
+import { useNavigate, useParams } from "react-router";
+import { findUserById } from "../services/users/users-service";
 
 function AdminScreen() {
-  const { currentUser, users } = useSelector((state) => state.users);
-  const navigate = useNavigate();
+  const { userId } = useParams();
+  const { currentUser } = useSelector((state) => state.users);
+  const [profile, setProfile] = useState(currentUser);
   const dispatch = useDispatch();
-  // if (!currentUser || currentUser.role !== 'ADMIN') {
-  //     navigate('/login');
-  // }
+  const navigate = useNavigate();
+  const fetchProfile = async () => {
+    if (userId) {
+      const user = await findUserById(currentUser._id);
+      setProfile(user);
+      return;
+    }
+    const response = await dispatch(profileThunk());
+    setProfile(response.payload);
+  };
+  const loadScreen = async () => {
+    await fetchProfile();
+  };
+  const updateProfile = async () => {
+    await dispatch(updateUserThunk(profile));
+  };
+
   useEffect(() => {
-    dispatch(findAllUsersThunk());
-  }, []);
+    loadScreen();
+  }, [userId]);
   return (
-    <div>
-      <h1>Admin</h1>
-      <ul className="list-group">
-        {users &&
-          users.map((user) => {
-            return (
-              <li key={user.id} className="list-group-item">
-                <h2>
-                  {user.username} {user.firstName} {user.lastName}
-                </h2>
-              </li>
-            );
-          })}
-      </ul>
+    <div className='container-narrow'>
+
+      <div>
+        {currentUser && (
+          <div>
+            <h2>
+              Welcome {currentUser.username}!
+            </h2>
+            <p>{currentUser.username}, your profile id is {currentUser._id}</p>
+          </div>
+        )}
+      </div>
+
+      {profile && (
+        <div>
+          <h2>Update settings:</h2>
+          <div>
+            <label>Username</label>
+            <input
+              type="text"
+              readOnly={true}
+              className="form-control"
+              value={currentUser.username}
+              onChange={(e) => {
+                setProfile({ ...currentUser, username: e.target.value });
+              }}
+            />
+          </div>
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              readOnly={typeof userId !== undefined}
+              className="form-control"
+              value={profile.password}
+              onChange={(e) => {
+                setProfile({ ...currentUser, password: e.target.value });
+              }}
+            />
+          </div>
+          <div className="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={profile.firstName}
+              onChange={(e) => {
+                setProfile({ ...currentUser, firstName: e.target.value });
+              }}
+            />
+          </div>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={profile.lastName}
+              onChange={(e) => {
+                setProfile({ ...currentUser, lastName: e.target.value });
+              }}
+            />
+          </div>
+          <button onClick={updateProfile} className="btn btn-success">
+            Update
+          </button>
+        </div>
+      )}
+
+      <button
+        className="btn btn-danger"
+        onClick={() => {
+          dispatch(logoutThunk());
+          navigate("/login");
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 }

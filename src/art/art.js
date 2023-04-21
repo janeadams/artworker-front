@@ -2,18 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getArt } from "./service";
 import { useSelector } from "react-redux";
-import { userLikesArt } from "./likes-service";
+import { userLikesArt, userDislikesArt } from "./likes-service";
 
 function ArtDetailsScreen() {
   const { currentUser } = useSelector((state) => state.users);
   const { id } = useParams();
   const [art, setArt] = useState({});
-  const [liked, setLiked] = useState(false); // <-- Add state to track if art is liked
+  const [liked, setLiked] = useState(false);
   const fetchArt = async () => {
     const response = await getArt(id);
+    console.log(response)
     setArt(response.data);
   };
   const likeArt = async () => {
+    setLiked(true);
     if (Array.isArray(currentUser.likes)) {
       const response = await userLikesArt(currentUser._id, id);
       console.log(response);
@@ -25,11 +27,23 @@ function ArtDetailsScreen() {
     } else {
       console.log("Likes is not an array");
     }
-    setLiked(true); // <-- Update liked state to true
+  };
+  const dislikeArt = async () => {
+    setLiked(false); // <-- Update liked state to false
+    if (Array.isArray(currentUser.likes)) {
+      const response = await userDislikesArt(currentUser._id, id);
+      console.log(response);
+      if (response.status === 200) {
+        console.log("Like removed!");
+      } else {
+        console.log(response);
+      }
+    } else {
+      console.log("Likes is not an array");
+    }
   };
   useEffect(() => {
     fetchArt();
-    // Check if the art is already liked by the user
     if (currentUser && Array.isArray(currentUser.likes)) {
       setLiked(currentUser.likes.includes(id));
     }
@@ -46,7 +60,7 @@ function ArtDetailsScreen() {
           <button onClick={likeArt} className={`btn ${liked ? "btn-secondary" : "btn-success"}`}>
             {liked ? "Liked" : "Like"}
           </button>
-          <button className={`btn ${liked ? "btn-danger" : "btn-secondary"}`}>
+          <button onClick={dislikeArt} className={`btn ${liked ? "btn-danger" : "btn-secondary"}`}>
             {liked ? "Dislike" : "Unlike"}
           </button>
         </>

@@ -2,20 +2,38 @@
 
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import logo from "../logos-01.svg";
 
 export default function NavBar() {
   const { currentUser } = useSelector((state) => state.users);
   return (
-    <div>
-      <Link to="/admin">Admin</Link>|<Link to="/">Home</Link>|
-      <Link to="/art">Art</Link>|
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <Link className="navbar-brand" href="/"><img src={logo}></img></Link>
+      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span className="navbar-toggler-icon"></span>
+      </button>
+
+      <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul className="navbar-nav mr-auto">
+        <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
+        <li className="nav-item"><Link className="nav-link" to="/art">Art</Link></li>
+        <li className="nav-item"><Link className="nav-link" to="/art/search">Search</Link></li>
       {!currentUser && (
         <>
-          <Link to="/login">Login</Link>|<Link to="/register">Register</Link>|
+          <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/register">Register</Link></li>
         </>
       )}
-      {currentUser && <Link to="/profile">Profile</Link>}
-      {currentUser && <Link to="/create">Create</Link>}
-    </div>
+      {currentUser && (
+        <>
+        <li className="nav-item"><Link className="nav-link" to="/profile">Profile</Link></li>
+        <li className="nav-item"><Link className="nav-link" to="/create">Create</Link></li>
+        <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>
+        </>
+      )
+    }
+      </ul>
+      </div>
+    </nav>
   );
 }

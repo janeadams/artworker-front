@@ -11,14 +11,25 @@ function LoginScreen() {
   const navigate = useNavigate();
   const login = async () => {
     try {
-      await dispatch(loginThunk({ username, password }));
-      navigate("/profile");
+      const response = await dispatch(loginThunk({ username, password }));
+      const currentUser = response.payload;
+      if (currentUser) {
+        navigate("/profile");
+      } else {
+        alert("User not found. Please register.");
+        navigate("/register");
+      }
     } catch (err) {
-      console.log(err);
+      if (err.response && err.response.status === 404) {
+        alert("User not found. Please register.");
+        navigate("/register");
+      } else {
+        console.log(err);
+      }
     }
   };
   return (
-    <div>
+    <div className='container-narrow'>
       <h1>Login</h1>
       <div className="form-group">
         <label>Username</label>

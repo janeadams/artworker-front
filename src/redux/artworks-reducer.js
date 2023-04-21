@@ -28,30 +28,31 @@ const artworksSlice = createSlice({
       state.artworks.push(action.payload);
     },
   },
-  extraReducers: {
-    [updateArtworkThunk.fulfilled]: (state, action) => {
-      state.artworks = state.artworks.map((artwork) =>
-        artwork._id === action.payload._id ? action.payload : artwork
-      );
-    },
-    [createArtworkThunk.fulfilled]: (state, action) => {
-      state.artworks.push(action.payload);
-    },
-    [deleteArtworkThunk.fulfilled]: (state, action) => {
-      state.artworks = state.artworks.filter((artwork) => artwork._id !== action.payload);
-    },
-    [findArtworksThunk.pending]: (state, action) => {
-      state.loading = true;
-      state.artworks = [];
-    },
-    [findArtworksThunk.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.artworks = action.payload;
-    },
-    [findArtworksThunk.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.error.message;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateArtworkThunk.fulfilled, (state, action) => {
+        state.artworks = state.artworks.map((artwork) =>
+          artwork._id === action.payload._id ? action.payload : artwork
+        );
+      })
+      .addCase(createArtworkThunk.fulfilled, (state, action) => {
+        state.artworks.push(action.payload);
+      })
+      .addCase(deleteArtworkThunk.fulfilled, (state, action) => {
+        state.artworks = state.artworks.filter((artwork) => artwork._id !== action.payload);
+      })
+      .addCase(findArtworksThunk.pending, (state) => {
+        state.loading = true;
+        state.artworks = [];
+      })
+      .addCase(findArtworksThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.artworks = action.payload;
+      })
+      .addCase(findArtworksThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
