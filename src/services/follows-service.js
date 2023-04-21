@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const USERS_API = "http://localhost:4000/api/users";
+const USERS_API = "https://artworker-back.onrender.com/api/users";
 
 export const userFollowsUser = async (followerId, followedId) => {
   const response = await axios.post(

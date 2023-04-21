@@ -2,30 +2,30 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { fullTextSearch, getArtworks } from "./service";
 import ArtCard from "../components/art-card";
+
 function ArtSearchScreen() {
   const { searchTerm } = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useState(searchTerm);
   const [results, setResults] = useState({});
   const [artworks, setArtworks] = useState([]);
+
   const searchArt = async () => {
     const response = await fullTextSearch(search);
     setResults(response);
-    console.log(response);
     navigate(`/art/search/${search}`);
     const artData = await getArtworks(response.objectIDs.slice(0, 10));
     console.log(artData);
     setArtworks(artData);
-    console.log(artworks);
     return response;
   };
-  
+
   useEffect(() => {
     if (searchTerm) {
       searchArt();
     }
   }, [searchTerm]);
-  
+
   return (
     <div>
       <h1>Art Search</h1>
@@ -40,8 +40,10 @@ function ArtSearchScreen() {
       />
 
       <h2>Art</h2>
-      <div className='container'>
-          {artworks.map((art) => (ArtCard(art)))}
+      <div className="container">
+        {artworks.map((art) => (
+          <ArtCard art={art} />
+        ))}
       </div>
     </div>
   );

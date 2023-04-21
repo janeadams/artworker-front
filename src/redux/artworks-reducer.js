@@ -15,7 +15,19 @@ const initialState = {
 const artworksSlice = createSlice({
   name: "artworks",
   initialState,
-  reducers: {},
+  reducers: {
+    updateArtwork: (state, action) => {
+      state.artworks = state.artworks.map((artwork) =>
+        artwork._id === action.payload._id ? action.payload : artwork
+      );
+    },
+    deleteArtwork: (state, action) => {
+      state.artworks = state.artworks.filter((artwork) => artwork._id !== action.payload);
+    },
+    addArtwork: (state, action) => {
+      state.artworks.push(action.payload);
+    },
+  },
   extraReducers: {
     [updateArtworkThunk.fulfilled]: (state, action) => {
       state.artworks = state.artworks.map((artwork) =>

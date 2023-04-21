@@ -6,7 +6,6 @@ import { userLikesArt } from "./likes-service";
 
 function ArtDetailsScreen() {
   const { currentUser } = useSelector((state) => state.users);
-  console.log(currentUser)
   const { id } = useParams();
   const [art, setArt] = useState({});
   const fetchArt = async () => {
@@ -14,9 +13,12 @@ function ArtDetailsScreen() {
     setArt(response.data);
   };
   const likeArt = async () => {
-    console.log('likeArt triggered')
-    const response = await userLikesArt(currentUser._id, id);
-    console.log(response);
+    if (Array.isArray(currentUser.likes)) {
+      const response = await userLikesArt(currentUser._id, id);
+      console.log(response);
+    } else {
+      console.log("Likes is not an array");
+    }
   };
   useEffect(() => {
     fetchArt();

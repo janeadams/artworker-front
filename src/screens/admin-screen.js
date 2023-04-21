@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+// The useSelector hook is used to select the currentUser and users state from the Redux store. The useEffect hook is used to dispatch the findAllUsersThunk action when the component mounts. The users.map method is used to loop through the users and display them in a list.
+
 import { useNavigate } from "react-router";
 import { findAllUsersThunk } from "../services/users/users-thunks";
 

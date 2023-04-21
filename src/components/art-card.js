@@ -1,3 +1,5 @@
+// The ArtCard component returns a Link component that wraps a div containing an image, title, and artist name. The key prop is set to the objectID of the art object, which is used to uniquely identify each card when rendering in a list. The style prop is used to set the maximum width and height of the card body, as well as the actual width and height.
+
 import { Link } from "react-router-dom";
 
 const ArtCard = (art) => {

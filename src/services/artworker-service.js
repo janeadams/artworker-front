@@ -10,10 +10,15 @@ export const findArtworks = async () => {
     const artworks = response.data;
     return artworks;
    }
+
+export const findArtworkById = async (artworkId) => {
+    const response = await axios.get(`${ARTWORK_API}/${artworkId}`)
+    return response.data
+}
    
-export const deleteArtwork = async (tid) => {
+export const deleteArtwork = async (artworkId) => {
     const response = await axios
-        .delete(`${ARTWORK_API}/${tid}`)
+        .delete(`${ARTWORK_API}/${artworkId}`)
     return response.data
 }
   
