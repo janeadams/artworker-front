@@ -13,7 +13,7 @@ function RegisterScreen() {
   const register = () => {
     try {
       dispatch(registerThunk({ username, password, role })); // pass role to registerThunk
-      navigate("/home");
+      navigate("/");
     } catch (err) {
       console.log(err);
     }

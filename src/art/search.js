@@ -14,9 +14,13 @@ function ArtSearchScreen() {
     const response = await fullTextSearch(search);
     setResults(response);
     navigate(`/art/search/${search}`);
-    const artData = await getArtworks(response.objectIDs.slice(0, 31));
-    console.log('searchArt')
-    console.log(artData);
+    const slicer = 31;
+    if (response.objectIDs.length < slicer) {
+      slicer = response.objectIDs.length - 1;
+    }
+    const artData = await getArtworks(response.objectIDs.slice(0, slicer));
+    //console.log('searchArt')
+    //console.log(artData);
     setArtworks(artData);
     return response;
   };

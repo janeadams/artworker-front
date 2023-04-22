@@ -6,7 +6,9 @@ import logo from "../logos-01.svg";
 
 export default function NavBar() {
   const { currentUser } = useSelector((state) => state.users);
+  console.log("currentUser: " + (currentUser ? currentUser.username : 'none'))
   return (
+    <>
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <Link className="navbar-brand" href="/"><img src={logo}></img></Link>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +29,7 @@ export default function NavBar() {
       {currentUser && (
         <>
         <li className="nav-item"><Link className="nav-link" to="/profile">Profile</Link></li>
-        <li className="nav-item"><Link className="nav-link" to="/create">Create</Link></li>
+        {(currentUser.role === 'ARTIST') && <li className="nav-item"><Link className="nav-link" to="/create">Create</Link></li>}
         <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>
         </>
       )
@@ -35,5 +37,7 @@ export default function NavBar() {
       </ul>
       </div>
     </nav>
+    <div>{JSON.stringify(currentUser)}</div>
+    </>
   );
 }

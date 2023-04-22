@@ -8,8 +8,10 @@ import {
   loginThunk,
   logoutThunk,
   profileThunk,
-  registerThunk,
+  registerThunk,  
 } from "../services/users/users-thunks";
+
+import { userLikesArt, userDislikesArt, findLikesByUserId } from "../art/likes-service";
 
 const initialState = {
   users: [],
@@ -21,7 +23,11 @@ const initialState = {
 const usersSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    updateUserLikes: (state, action) => {
+      state.currentUser.likes = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(updateUserThunk.fulfilled, (state, action) => {
@@ -65,7 +71,7 @@ const usersSlice = createSlice({
       })
       .addCase(registerThunk.fulfilled, (state, action) => {
         state.currentUser = action.payload;
-      });
+      })
   },
 });
 

@@ -28,9 +28,13 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
+  console.log("currentUser: " + (currentUser ? currentUser.username : 'none'))
+  console.log("userId: " + (userId ? userId : currentUser._id))
+
   const fetchProfile = async () => {
     if (userId) {
-      const user = await findUserById(userId);
+      console.log(`Fetching profile for ${userId}`)
+      const user = await findUserById(userId ? userId : currentUser._id);
       setProfile(user);
       setIsOwnProfile(currentUser?._id === user?._id);
     } else {
@@ -39,8 +43,10 @@ function ProfileScreen() {
         return;
       }
       else {
-        setProfile(currentUser);
+        const user = await findUserById(currentUser._id);
+        setProfile(user);
         setIsOwnProfile(true);
+        console.log('Welcome to your profile!')
       }
     }
   };  
@@ -54,11 +60,11 @@ function ProfileScreen() {
     setFollows(follows);
   };
   const fetchLikes = async () => {
-    console.log(`fetching likes for ${profile._id}`)
-    const likes = await findLikesByUserId(profile._id);
-    const populatedLikes = await getArtworks(likes);
+    console.log(`likes: ${profile ? profile.likes : 'no profile!'}`)
+    const populatedLikes = await getArtworks(profile.likes);
     console.log(populatedLikes)
     setLikes(populatedLikes);
+    console.log()
   };
   
   useEffect(() => {
@@ -76,6 +82,7 @@ function ProfileScreen() {
 
   const followUser = async () => {
     if (currentUser && !isOwnProfile) {
+      console.log("This isn't your profile")
       await userFollowsUser(currentUser._id, profile._id);
     }
   };
@@ -97,7 +104,7 @@ function ProfileScreen() {
         {currentUser && (
           <div>
             <h2>
-              Welcome {currentUser.username}!
+              Welcome {currentUser.username}! You are a {currentUser.role.toLowerCase()}.
             </h2>
           </div>
         )}
@@ -114,35 +121,40 @@ function ProfileScreen() {
         </h1>
       )}
 
-      <div>
+    <div className="row">
+      <div className="col">
         <h2>Likes</h2>
         <div className="container">
-        {likes && likes.map((art) => (ArtCard(art)))}
+          {likes && likes.map((art) => (ArtCard(art)))}
         </div>
       </div>
+    </div>
 
-      {follows && (
-        <div>
+    {follows && (
+      <div className="row">
+        <div className="col">
           <h2>Followers</h2>
           <ul className="list-group">
-          {follows.map((follow) => (
-                <li key={follow.follower._id} className="list-group-item">
-                    <Link to={`/profile/${follow.follower._id}`}>
-                        <h3>{follow.follower.username}</h3>
-                        <h3>{follow.follower._id}</h3>
-                    </Link>
-                </li>
+            {follows.map((follow) => (
+              <li key={follow.follower._id} className="list-group-item">
+                <Link to={`/profile/${follow.follower._id}`}>
+                  <h3>{follow.follower.username}</h3>
+                  <h3>{follow.follower._id}</h3>
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
-      )}
+      </div>
+    )}
 
-      {following && (
-        <div>
+    {following && (
+      <div className="row">
+        <div className="col">
           <h2>Following</h2>
           <ul className="list-group">
             {following.map((follow) => (
-              <li key={follow.follower._id} className="list-group-item">
+              <li key={follow.followed._id} className="list-group-item">
                 <Link to={`/profile/${follow.followed._id}`}>
                   <h3>{follow.followed.username}</h3>
                   <h3>{follow.followed._id}</h3>
@@ -151,7 +163,8 @@ function ProfileScreen() {
             ))}
           </ul>
         </div>
-      )}
+      </div>
+    )}
 
   {isOwnProfile && (
     <>
