@@ -37,7 +37,7 @@ export default function NavBar() {
       </ul>
       </div>
     </nav>
-    <div>{JSON.stringify(currentUser)}</div>
+    <div className="debug">{JSON.stringify(currentUser)}</div>
     </>
   );
 }

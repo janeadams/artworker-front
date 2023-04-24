@@ -28,37 +28,39 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
-  console.log("currentUser: " + (currentUser ? currentUser.username : 'none'))
-  console.log("userId: " + (userId ? userId : currentUser._id))
+  //console.log("currentUser: " + (currentUser ? currentUser.username : 'none'))
+  //console.log("userId: " + (userId ? userId : currentUser._id))
 
   const fetchProfile = async () => {
     if (userId) {
-      console.log(`Fetching profile for ${userId}`)
-      const user = await findUserById(userId ? userId : currentUser._id);
+      console.log(`Fetching profile for ${userId}`);
+      const user = await findUserById(userId);
       setProfile(user);
-      setIsOwnProfile(currentUser?._id === user?._id);
+      if (currentUser) {
+        setIsOwnProfile(currentUser._id === user._id);
+      }
     } else {
       if (!currentUser) {
-        navigate("/login");
-        return;
+        navigate('/login')
+        return
       }
-      else {
-        const user = await findUserById(currentUser._id);
-        setProfile(user);
-        setIsOwnProfile(true);
-        console.log('Welcome to your profile!')
-      }
+      const user = await findUserById(currentUser._id);
+      setProfile(user);
+      setIsOwnProfile(true);
+      console.log('Welcome to your profile!')
     }
-  };  
+  };
 
   const fetchFollowing = async () => {
     const following = await findFollowsByFollowerId(profile._id);
     setFollowing(following);
   };
+
   const fetchFollowers = async () => {
     const follows = await findFollowsByFollowedId(profile._id);
     setFollows(follows);
   };
+
   const fetchLikes = async () => {
     console.log(`likes: ${profile ? profile.likes : 'no profile!'}`)
     const populatedLikes = await getArtworks(profile.likes);
@@ -66,19 +68,23 @@ function ProfileScreen() {
     setLikes(populatedLikes);
     console.log()
   };
-  
+
   useEffect(() => {
-    fetchProfile();
+    if (!userId && !currentUser) {
+      console.log('No user id or current user, redirecting to login')
+    }
+    else {
+      fetchProfile();
+    }
   }, [userId, currentUser]);
 
   useEffect(() => {
-    console.log(profile);
-    if (profile._id) {
+    if (currentUser || profile._id) {
       fetchLikes();
       fetchFollowing();
       fetchFollowers();
     }
-  }, [profile]);
+  }, [profile, currentUser]);
 
   const followUser = async () => {
     if (currentUser && !isOwnProfile) {
@@ -90,18 +96,11 @@ function ProfileScreen() {
     await dispatch(updateUserThunk(profile));
   };
 
-  useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-  }, [userId]);
-
   return (
     <div className='container-narrow'>
 
       <div>
-        {currentUser && (
+      {currentUser && currentUser.role && (
           <div>
             <h2>
               Welcome {currentUser.username}! You are a {currentUser.role.toLowerCase()}.

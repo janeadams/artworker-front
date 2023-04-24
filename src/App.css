@@ -105,3 +105,13 @@ h1, h2 {
   max-width: 100%;
   padding: 10px;
 }
+
+.debug {
+  color: #eee;
+}
+
+.debug:hover {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.2em;
+}

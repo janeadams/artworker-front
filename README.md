@@ -25,3 +25,22 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+
+## Navigation
+
+
+
+| Route                         | Description                                                                |
+| -----------------------------| -------------------------------------------------------------------------- |
+| `/artworks/:id`              | Display details of a specific artwork identified by its `id` parameter     |
+| `/art/search`                | Display a search form for artworks                                          |
+| `/art/search/:searchTerm`    | Display search results for artworks matching the `searchTerm` parameter    |
+| `/art`                       | Display a gallery of all artworks                                           |
+| `/create`                    | Display a form for creating a new artwork                                    |
+| `/admin`                     | Display an administrative dashboard for managing artworks and users        |
+| `/profile`                   | Display the authenticated user's profile                                    |
+| `/profile/:userId`           | Display the profile of the user identified by the `userId` parameter        |
+| `/login`                     | Display a login form for the user to authenticate                            |
+| `/register`                  | Display a registration form for a new user to sign up                        |
+| `/`                          | Display the home page of the application                                     |
