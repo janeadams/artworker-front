@@ -12,6 +12,8 @@ In addition to sharing and curating art, Artworker is also designed to help user
 
 Overall, Artworker is a vibrant community of art lovers, curators, and artists who share a passion for the world of art. Whether you're an established curator, a budding artist, or just a lover of beautiful works of art, Artworker is the perfect platform for you to share, explore, and connect with others who share your interests.
 
+![UML Diagram](uml.png)
+
 ## Getting Started
 
 In the project directory, you can run:
